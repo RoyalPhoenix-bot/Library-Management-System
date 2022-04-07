@@ -1,5 +1,5 @@
 # Instructions to run the code
-- Make sure the files `libarayManagementSystem.cpp`, `user.csv` and `books.csv` are in the same directory.
+- Make sure the files `libraryManagementSystem.cpp`, `user.csv` and `books.csv` are in the same directory.
 The `.csv` files may/may not be empty but make sure there is one.
 - To run the code, make sure you are in the same directory as the files on the terminal and give the command :
 ```
