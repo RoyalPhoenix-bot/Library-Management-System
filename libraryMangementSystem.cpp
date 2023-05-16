@@ -587,8 +587,7 @@ void Book:: askForRating(Book& book) {
 }*/
 void BookDatabase::displayBooks(){
     for(auto i : listOfBooks){
-        cout << "   " << "Name: " << i.title << " | Author: " << i.author << " | ISBN: " << i.isbn << " | Publication: " << i.publication << "\n";
-        cout << " | Average Rating: " << i.getRatingDisplay() << "\n";//5
+        cout << "   " << "Name: " << i.title << " | Author: " << i.author << " | ISBN: " << i.isbn << " | Publication: " << i.publication <<  " | Average Rating: " << i.getRatingDisplay() << "\n";//5
     }
 }
 /*void BookDatabase::rateBook(const string& isbn, int rating) {
@@ -1082,53 +1081,58 @@ void updateDatabase(){
 
 int main(){
     getDatabaseData();
-    int correctCredentials=0;
+    int correctCredentials,end=1;
     user currUser;
-    while(correctCredentials==0){
-        string un,pass;
-        cout << "Enter the userid: (Eg: defaultLibrarian) ";
-        cin >> un;
-        cout << "Enter the password: (Eg: 1234) ";
-        cin >> pass;
-        if(un=="defaultLibrarian"  && pass=="1234"){
-            correctCredentials=1;
-            break;
-        }
-        for(auto i : listOfUsers){
-            if(i.id==un && pass==i.getPassword()){
-                currUser=i;
-                correctCredentials=1;
+    do {
+        correctCredentials=0;
+        while (correctCredentials == 0) {
+            string un, pass;
+            cout << "Enter the userid: (Eg: defaultLibrarian) ";
+            cin >> un;
+            cout << "Enter the password: (Eg: 1234) ";
+            cin >> pass;
+            if (un == "defaultLibrarian" && pass == "1234") {
+                correctCredentials = 1;
                 break;
             }
-        }
-        if(!correctCredentials)cout << "Incorrect Credentials.\n";
-    }
-    cout << "Hello " << currUser.name << "!"<< endl;
-    if(currUser.usertype==1){
-        int i=0;
-        for(;i<listOfStudents.size();i++){
-            if(listOfStudents[i].id==currUser.id){
-                break;
+            for (auto i: listOfUsers) {
+                if (i.id == un && pass == i.getPassword()) {
+                    currUser = i;
+                    correctCredentials = 1;
+                    break;
+                }
             }
+            if (!correctCredentials)cout << "Incorrect Credentials.\n";
         }
-        listOfStudents[i].studentInterface();
-    }else if(currUser.usertype==2){
-        int i=0;
-        for(;i<listOfProfessors.size();i++){
-            if(listOfProfessors[i].id==currUser.id){
-                break;
+        cout << "Hello " << currUser.name << "!" << endl;
+        if (currUser.usertype == 1) {
+            int i = 0;
+            for (; i < listOfStudents.size(); i++) {
+                if (listOfStudents[i].id == currUser.id) {
+                    break;
+                }
             }
-        }
-        listOfProfessors[i].professorInterface();
-    }else{
-        int i=0;
-        for(;i<listOfLibrarians.size();i++){
-            if(listOfLibrarians[i].id==currUser.id){
-                break;
+            listOfStudents[i].studentInterface();
+        } else if (currUser.usertype == 2) {
+            int i = 0;
+            for (; i < listOfProfessors.size(); i++) {
+                if (listOfProfessors[i].id == currUser.id) {
+                    break;
+                }
             }
+            listOfProfessors[i].professorInterface();
+        } else {
+            int i = 0;
+            for (; i < listOfLibrarians.size(); i++) {
+                if (listOfLibrarians[i].id == currUser.id) {
+                    break;
+                }
+            }
+            listOfLibrarians[i].librarianInterface();
         }
-        listOfLibrarians[i].librarianInterface();
-    }
-    updateDatabase();
+        updateDatabase();
+        cout<<"Sign in with another user enter 1 else enter 0 for exit system"<<endl;
+        cin>>end;
+    }while(end);
     return 0;
 }
