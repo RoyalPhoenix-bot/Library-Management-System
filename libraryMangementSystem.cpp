@@ -4,76 +4,89 @@
 using namespace std;
 
 class user{
-    protected:
-        string password;
-    public:
-        string name;
-        string id;
-        void setPassword(string s){
-            this->password=s;
-        };
-        string getPassword(){
-            return this->password;
-        };
-        int usertype;// 1 for student, 2 for professor and 3 for librarian
+protected:
+    string password;
+public:
+    string name;
+    string id;
+    void setPassword(string s){
+        this->password=s;
+    };
+    string getPassword(){
+        return this->password;
+    };
+    int usertype;// 1 for student, 2 for professor and 3 for librarian
+    // Common member functions and variables for Professor and Student
 };
 
 class student: public user{
-    public: 
-        vector<string> listofissuedbooks;
-        int fine;
-        int studentInterface();
-        int calculateFine(string returnDate,string dueDate);
-        void clearFineAmount();
+public:
+    vector<string> listofissuedbooks;
+    int fine;
+    int studentInterface();
+    int calculateFine(string returnDate,string dueDate);
+    void clearFineAmount();
 };
 
 class professor: public user{
-    public: 
-        vector<string> listofissuedbooks;
-        int fine;
-        int professorInterface();
-        int calculateFine(string returnDate,string dueDate);
-        void clearFineAmount();
+public:
+    vector<string> listofissuedbooks;
+    int fine;
+    int professorInterface();
+    int calculateFine(string returnDate,string dueDate);
+    void clearFineAmount();
 };
 
 class librarian: public user{
-    public:
-        int librarianInterface();
+public:
+    int librarianInterface();
 };
 
 class Book{
-    public:
-        string title;
-        string author;
-        string isbn;
-        string publication;
-        int available;// 0 if it is issued(not available) and 1 if it is available.
-        string issuedto;// - if it is available, else username
-        string issuedate;
-        string bookRequest(string id);
-        string showDueDate(int usertype);
+public:
+    string title;
+    string author;
+    string isbn;
+    string publication;
+    int available;// 0 if it is issued(not available) and 1 if it is available.
+    string issuedto;// - if it is available, else username
+    string issuedate;
+    string bookRequest(string id);
+    string showDueDate(int usertype);
+    // New member variables for ratings
+    double averageRating;//1
+    int totalRatings;//2
+    map<string, int> userRatings;// User ID -> Rating
+    set<string> ratedByUsers;
+    bool hasRated(const string& userId);
+    string getRatingDisplay();
+    void rateBook(int numStars, const string& userId);
+
+
 
 };
 
 class BookDatabase{
-    public:
-        void displayBooks();
-        void displayAvailableBooks();
-        void checkAvailability();
-        void addBook();
-        void deleteBook();
-        void updateBook();
-        bool search();
+public:
+    void displayBooks();
+    void displayAvailableBooks();
+    void checkAvailability();
+    void addBook();
+    void deleteBook();
+    void updateBook();
+    bool search();
 };
 
 class userDatabase{
-    public:
-        void displayUsers();
-        void addUser();
-        void updateUser();
-        void deleteUser();
-        void searchUser();
-        bool search();
+public:
+    void displayUsers();
+    void addUser();
+    void updateUser();
+    void deleteUser();
+    void searchUser();
+    bool search();
+    void askForRating(Book& book, const string& userId);
+
 };
 
 vector<user> listOfUsers;
@@ -162,7 +175,7 @@ int librarian::librarianInterface(){
                             }
                         }
                     }
-                    
+
                 }
             }
             for(auto i : listOfProfessors){
@@ -285,7 +298,7 @@ int professor::professorInterface(){
         }
         else cout << "Enter a valid serial number.\n";
     }
-    
+
 }
 
 int professor::calculateFine(string retd,string dued){
@@ -330,7 +343,9 @@ int student::studentInterface(){
         cout << "5 - Request a book\n";
         cout << "6 - Return a book\n";
         cout << "7 - View Fine amount\n";
-        cout << "8 - Logout\n";
+        cout << "8 - Rate a book\n";  // New option for rating books
+        cout << "9 - Logout\n";
+        //cout << "8 - Logout\n";
         char c;
         cout << "Enter the serial number corresponding to your query: ";
         cin >> c;
@@ -381,20 +396,47 @@ int student::studentInterface(){
                         while(*itr!=listOfBooks[j].isbn)itr++;
                         this->listofissuedbooks.erase(itr);
                         i--;
+                        // Ask for rating after returning the book
+                        userDatabase db; // Create an object of the userDatabase class
+                        db.askForRating(listOfBooks[j],id); // Call the askForRating function through the userDatabase object
+                        break; // No need to continue searching for the book
+
+
                     }
                 }
-            }
 
-        }else if(c=='7'){
+            }
+        }
+
+
+        else if(c=='7'){
             cout << "The existing fine is: " << this->fine << "\n";
         }
-        else if(c=='8'){
+        else if (c == '8') {
+            // Code for rating a book
+            string isbn;
+            cout << "Enter the ISBN of the book you want to rate: ";
+            cin >> isbn;
+            for (auto& book : listOfBooks) {
+                if (book.isbn == isbn) {
+                    userDatabase db; // Create an object of the userDatabase class
+                    db.askForRating(book,id); // Call the askForRating function through the userDatabase object
+                    break;
+                }
+            }
+        }
+        else if (c == '9') {
             return 0;
         }
+
+            /*else if(c=='8'){
+                return 0;
+            }*/
         else cout << "Enter a valid serial number.\n";
     }
-    
+
 }
+
 
 int student::calculateFine(string retd,string dued){
     long long i = stoi(retd);
@@ -468,7 +510,7 @@ string Book::showDueDate(int usertype){
     m=(m+9)%12;
     y = y-m/10;
     long long dateno = 365*y+y/4-y/100+y/400 + (m*306+5)/10 + (d-1);
-    
+
     long long duedatno=dateno;
     if(usertype==1)duedatno+=30;
     else duedatno+=60;
@@ -497,13 +539,77 @@ string Book::showDueDate(int usertype){
     // cout << sdd << " " << smm << " " << sduey <<endl;
     return duedate;
 }
+bool Book:: hasRated(const string& userId) {
+    return ratedByUsers.find(userId) != ratedByUsers.end();
+}
 
-void BookDatabase::displayBooks(){
-    for(auto i : listOfBooks){
-        cout << "   " << "Name: " << i.title << " | Author: " << i.author << " | ISBN: " << i.isbn << " | Publication: " << i.publication << "\n";
+string Book:: getRatingDisplay() {
+    string ratingDisplay = "";
+    int rating = static_cast<int>(averageRating + 0.5); // Round the average rating
+    for (int i = 0; i < rating; i++) {
+        ratingDisplay += "*";
+    }
+    return ratingDisplay;
+}
+
+void Book::rateBook(int numStars, const string& userId) {
+    if (!hasRated(userId)) {
+        // Update the average rating and total ratings
+        double currentTotalRating = averageRating * totalRatings;
+        currentTotalRating += numStars;
+        totalRatings++;
+        averageRating = currentTotalRating / totalRatings;
+
+        // Add the user to the set of rated users
+        ratedByUsers.insert(userId);
     }
 }
 
+/*void Book::rateBook(int rating) {
+    // Update the average rating and total ratings
+    averageRating = (averageRating * totalRatings + rating) / (totalRatings + 1);
+    totalRatings++;
+}
+
+double Book::getAverageRating() const {
+    return averageRating;
+}
+void Book:: askForRating(Book& book) {
+    if (book.getAverageRating() == 0.0) {
+        int numStars;
+        cout << "Please rate the book '" << book.title << "' (1-5 stars): ";
+        cin >> numStars;
+        book.rateBook(numStars);
+        cout << "Thank you for rating the book!" << endl;
+    } else {
+        cout << "You have already rated the book '" << book.title << "'. Thank you!" << endl;
+    }
+}*/
+void BookDatabase::displayBooks(){
+    for(auto i : listOfBooks){
+        cout << "   " << "Name: " << i.title << " | Author: " << i.author << " | ISBN: " << i.isbn << " | Publication: " << i.publication << "\n";
+        cout << " | Average Rating: " << i.getRatingDisplay() << "\n";//5
+    }
+}
+/*void BookDatabase::rateBook(const string& isbn, int rating) {
+    for (auto& book : listOfBooks) {
+        if (book.isbn == isbn) {
+            book.rateBook(rating);
+            cout << "Successfully rated the book.\n";
+            return;
+        }
+    }
+    cout << "Book not found.\n";
+}
+double BookDatabase::getAverageRating(const string& isbn) const {
+    for (const auto& book : listOfBooks) {
+        if (book.isbn == isbn) {
+            return book.getAverageRating();
+        }
+    }
+    return 0.0;  // Return 0 if the book is not found
+}
+*/
 void BookDatabase::displayAvailableBooks(){
     for(auto i : listOfBooks){
         if(i.available==1)cout << "   " << "Name: " << i.title << " " << "Author: " << i.author << "\n";
@@ -521,6 +627,7 @@ void BookDatabase::checkAvailability(){
             flag=1;
             if(i.available==1){
                 cout << "Yes, " << i.title << " is available!\n";
+                cout << "Average Rating: " << i.getRatingDisplay() << "\n";//6
                 done=1;
             }
         }
@@ -528,6 +635,7 @@ void BookDatabase::checkAvailability(){
     if(flag && done==0){
         cout << "Sorry, "<< t << " isn't available right now.\n";
     }else if(flag==0 && done==0) cout << t << " isn't present in the library.\n";
+
 }
 
 void BookDatabase::addBook(){
@@ -825,6 +933,17 @@ bool userDatabase::search(){
     }
     return false;
 }
+void userDatabase::askForRating(Book& book, const string& userId) {
+    if (!book.hasRated(userId)) {
+        int numStars;
+        cout << "Please rate the book '" << book.title << "' (1-5 stars): ";
+        cin >> numStars;
+        book.rateBook(numStars, userId);
+        cout << "Thank you for rating the book!" << endl;
+    } else {
+        cout << "You have already rated the book '" << book.title << "'. Thank you!" << endl;
+    }
+}
 
 void getDatabaseData(){
     string line,word;
@@ -886,6 +1005,16 @@ void getDatabaseData(){
             temp.available=stoi(bookdata[4]);
             temp.issuedto=bookdata[5];
             temp.issuedate=bookdata[6];
+            temp.averageRating = stod(bookdata[7]);
+            temp.totalRatings = stoi(bookdata[8]);
+            // Add book ratings
+            for (int i = 9; i < bookdata.size(); i += 2) {
+                string userId = bookdata[i];
+                int rating = stoi(bookdata[i + 1]);
+                temp.userRatings[userId] = rating;
+                temp.ratedByUsers.insert(userId);
+            }
+
             listOfBooks.push_back(temp);
         }
     }else{
@@ -905,7 +1034,7 @@ void getDatabaseData(){
                 }
             }
         }
-    } 
+    }
 }
 
 void updateDatabase(){
@@ -942,7 +1071,11 @@ void updateDatabase(){
         fout << i.publication << ",";
         fout << i.available << ",";
         fout << i.issuedto << ",";
-        fout << i.issuedate << "\n";
+        fout << i.issuedate << ",";
+        fout << i.averageRating << ",";
+        fout << i.totalRatings << "\n";
+
+
     }
     fout.close();
 }
