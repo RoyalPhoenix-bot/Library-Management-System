@@ -293,18 +293,21 @@ int professor::professorInterface(){
                 }
             }
 
-        }else if(c=='7'){
+        } else if (c == '7') {
             cout << "The existing fine is: " << this->fine << "\n";
         }
-         } else if (c == '8') {
+        else if (c == '8') {
             Book b;
-             b.amountBorrow();
-    }
-        else if(c=='9'){
+            b.amountBorrow();
+        }
+
+        else if (c == '9') {
             return 0;
         }
         else cout << "Enter a valid serial number.\n";
     }
+
+}
 
 
 int professor::calculateFine(string retd,string dued){
