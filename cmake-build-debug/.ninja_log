@@ -1,0 +1,8 @@
+# ninja log v5
+7	5264	7059634521486282	CMakeFiles/Library-Management-System.dir/libraryMangementSystem.cpp.obj	d356d599722b94c8
+5265	5612	7059634524899005	Library-Management-System.exe	1732b4d7a4aaebb2
+0	13	0	clean	3111184632d67cfe
+1	178	7059637099038862	build.ninja	c0a6b0105210d126
+0	13	0	clean	c9dacbffe9c15681
+5	1955	7059638312467931	CMakeFiles/Library-Management-System.dir/libraryMangementSystem.cpp.obj	d356d599722b94c8
+1956	2224	7059638315112552	Library-Management-System.exe	1732b4d7a4aaebb2
