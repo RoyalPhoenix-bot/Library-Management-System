@@ -51,6 +51,8 @@ public:
     int available;// 0 if it is issued(not available) and 1 if it is available.
     string issuedto;// - if it is available, else username
     string issuedate;
+    string amountBorrowed;
+    void amountBorrow();
     string bookRequest(string id);
     string showDueDate(int usertype);
     // New member variables for ratings
@@ -235,7 +237,8 @@ int professor::professorInterface(){
         cout << "5 - Request a book\n";
         cout << "6 - Return a book\n";
         cout << "7 - View Fine amount\n";
-        cout << "8 - Logout\n";
+        cout << "8 - The number of times each book was borrowed\n";
+        cout << "9 - Logout\n";
         char c;
         cout << "Enter the serial number corresponding to your query: ";
         cin >> c;
@@ -293,13 +296,16 @@ int professor::professorInterface(){
         }else if(c=='7'){
             cout << "The existing fine is: " << this->fine << "\n";
         }
-        else if(c=='8'){
+         } else if (c == '8') {
+            Book b;
+             b.amountBorrow();
+    }
+        else if(c=='9'){
             return 0;
         }
         else cout << "Enter a valid serial number.\n";
     }
 
-}
 
 int professor::calculateFine(string retd,string dued){
     long long i = stoi(retd);
@@ -343,8 +349,9 @@ int student::studentInterface(){
         cout << "5 - Request a book\n";
         cout << "6 - Return a book\n";
         cout << "7 - View Fine amount\n";
-        cout << "8 - Rate a book\n";  // New option for rating books
-        cout << "9 - Logout\n";
+        cout << "8 - The number of times each book was borrowed\n";
+        cout << "9 - Rate a book\n";  // New option for rating books
+        cout << "10 - Logout\n";
         //cout << "8 - Logout\n";
         char c;
         cout << "Enter the serial number corresponding to your query: ";
@@ -413,6 +420,10 @@ int student::studentInterface(){
             cout << "The existing fine is: " << this->fine << "\n";
         }
         else if (c == '8') {
+            Book b;
+             b.amountBorrow();
+        }
+        else if (c == '9') {
             // Code for rating a book
             string isbn;
             cout << "Enter the ISBN of the book you want to rate: ";
@@ -470,6 +481,21 @@ void student::clearFineAmount(){
     cout << "Fine of " << this->name << " cleared.\n";
     return;
 }
+void Book::amountBorrow()
+{
+    Book temp;
+    char t[120];
+    getchar();
+    cout << "Enter the name of book to check its amounts borrow : ";
+    cin.getline(t, 120);// Loop because getline works differently and takes some extra space from previous input.
+    for (auto i: listOfBooks)
+    {
+        const char* charPtr = i.title.c_str();
+        if (strcmp(charPtr,t) == 0)
+
+             cout<<i.amountBorrowed << " Borrowed!\n";
+    }//for
+}
 
 string Book::bookRequest(string id){
     cout << "Enter the name of the book: ";
@@ -479,6 +505,7 @@ string Book::bookRequest(string id){
     int nb=listOfBooks.size();
     for(int i=0;i<nb;i++){
         if(listOfBooks[i].title==t && listOfBooks[i].available==1){
+            listOfBooks[i].amountBorrowed += 1;
             listOfBooks[i].issuedto=id;
             listOfBooks[i].available=0;
             cout << "Please Enter the issue date(DDMMYYYY): ";
@@ -585,6 +612,7 @@ void Book:: askForRating(Book& book) {
         cout << "You have already rated the book '" << book.title << "'. Thank you!" << endl;
     }
 }*/
+
 void BookDatabase::displayBooks(){
     for(auto i : listOfBooks){
         cout << "   " << "Name: " << i.title << " | Author: " << i.author << " | ISBN: " << i.isbn << " | Publication: " << i.publication << "\n";
@@ -659,6 +687,7 @@ void BookDatabase::addBook(){
     newBook.publication=t;
     newBook.issuedate="-";
     newBook.issuedto="-";
+     newBook.amountBorrowed = '\0';
     listOfBooks.push_back(newBook);
     cout << "Book added.\n";
 }
@@ -1005,8 +1034,9 @@ void getDatabaseData(){
             temp.available=stoi(bookdata[4]);
             temp.issuedto=bookdata[5];
             temp.issuedate=bookdata[6];
-            temp.averageRating = stod(bookdata[7]);
-            temp.totalRatings = stoi(bookdata[8]);
+            temp.amountBorrowed = bookdata[7];
+            temp.averageRating = stod(bookdata[8]);
+            temp.totalRatings = stoi(bookdata[9]);
             // Add book ratings
             for (int i = 9; i < bookdata.size(); i += 2) {
                 string userId = bookdata[i];
@@ -1072,6 +1102,7 @@ void updateDatabase(){
         fout << i.available << ",";
         fout << i.issuedto << ",";
         fout << i.issuedate << ",";
+        fout << i.amountBorrowed;
         fout << i.averageRating << ",";
         fout << i.totalRatings << "\n";
 
