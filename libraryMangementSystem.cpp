@@ -349,7 +349,7 @@ int student::studentInterface(){
         cout << "5 - Request a book\n";
         cout << "6 - Return a book\n";
         cout << "7 - View Fine amount\n";
-        cout << "8 - The number of times each book was borrowed\n";
+        cout << "8 - The number of times each book was borrowed\n"; //new picther of tair
         cout << "9 - Rate a book\n";  // New option for rating books
         cout << "10 - Logout\n";
         //cout << "8 - Logout\n";
@@ -436,13 +436,9 @@ int student::studentInterface(){
                 }
             }
         }
-        else if (c == '9') {
+        else if (c == '10') {
             return 0;
         }
-
-            /*else if(c=='8'){
-                return 0;
-            }*/
         else cout << "Enter a valid serial number.\n";
     }
 
