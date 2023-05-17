@@ -30,6 +30,7 @@ public:
     void clearFineAmount();
     void addToReadListS(string nameOfBook);
     void chooseForReadListS();
+    void SearchByGenre();
 };
 
 class professor: public user{
@@ -61,6 +62,7 @@ public:
     string issuedate;
     string bookRequest(string id);
     string showDueDate(int usertype);
+    string genre;
 
 };
 
@@ -232,7 +234,8 @@ int professor::professorInterface(){
         cout << "6 - Return a book\n";
         cout << "7 - View Fine amount\n";
         cout << "8 - view your read list\n";
-        cout << "9- Logout\n";
+        cout <<"9 - search By genre\n";
+        cout << "10- Logout\n";
         char c;
         cout << "Enter the serial number corresponding to your query: ";
         cin >> c;
@@ -305,9 +308,15 @@ int professor::professorInterface(){
         else if(c=='8'){
             chooseForReadList();
         }
-        else if(c=='9'){
+          else if(c=='9')
+        {
+            student temp;
+            temp.SearchByGenre();
+        }
+        else if(c=='10'){
             return 0;
         }
+      
         else cout << "Enter a valid serial number.\n";
     }
 
@@ -355,8 +364,9 @@ int student::studentInterface(){
         cout << "5 - Request a book\n";
         cout << "6 - Return a book\n";
         cout << "7 - View Fine amount\n";
-        cout << "9 - View read list\n";
-        cout << "8 - Logout\n";
+        cout << "8 - View read list\n";
+        cout << "9 - search By genre\n";
+        cout << "10 - Logout\n";
         char c;
         cout << "Enter the serial number corresponding to your query: ";
         cin >> c;
@@ -430,7 +440,12 @@ int student::studentInterface(){
         else if(c=='8'){
             chooseForReadListS();
         }
-        else if(c=='9'){
+        else if(c=='9')
+        {
+            student temp;
+            temp.SearchByGenre();
+        }
+        else if(c=='10'){
             return 0;
         }
         else cout << "Enter a valid serial number.\n";
@@ -595,6 +610,8 @@ void BookDatabase::addBook(){
     newBook.issuedto="-";
     listOfBooks.push_back(newBook);
     cout << "Book added.\n";
+    
+    
 }
 
 void BookDatabase::updateBook(){
@@ -1097,3 +1114,14 @@ void student:: chooseForReadListS(){
     sizeOfReadList-=1;
     readList=str;
 }
+void student::SearchByGenre()
+{
+    cout<<"please enter the genre"<<endl;
+    string t;
+    while(t=="")getline(cin,t);
+    for(auto p : listOfBooks)
+    {
+        if (p.genre == t)
+            cout << "   Name: " << p.title << ".\n";
+    }
+}//SearchByGenre
