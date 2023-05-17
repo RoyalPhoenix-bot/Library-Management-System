@@ -62,6 +62,8 @@ public:
     string issuedate;
     string bookRequest(string id);
     string showDueDate(int usertype);
+     string bookRequest(string id);
+    void amountBorrow();
     string genre;
 
 };
@@ -233,9 +235,10 @@ int professor::professorInterface(){
         cout << "5 - Request a book\n";
         cout << "6 - Return a book\n";
         cout << "7 - View Fine amount\n";
-        cout << "8 - view your read list\n";
-        cout <<"9 - search By genre\n";
-        cout << "10- Logout\n";
+        cout << "8 - The number of times each book was borrowed\n";
+        cout << "9 - view your read list\n";
+        cout <<"10 - search By genre\n";
+        cout << "11- Logout\n";
         char c;
         cout << "Enter the serial number corresponding to your query: ";
         cin >> c;
@@ -305,15 +308,19 @@ int professor::professorInterface(){
         }else if(c=='7'){
             cout << "The existing fine is: " << this->fine << "\n";
         }
-        else if(c=='8'){
+             }else if(c=='8'){
+             Book b;
+            b.amountBorrow();
+        }
+        else if(c=='9'){
             chooseForReadList();
         }
-          else if(c=='9')
+          else if(c=='10')
         {
             student temp;
             temp.SearchByGenre();
         }
-        else if(c=='10'){
+        else if(c=='11'){
             return 0;
         }
       
@@ -364,9 +371,11 @@ int student::studentInterface(){
         cout << "5 - Request a book\n";
         cout << "6 - Return a book\n";
         cout << "7 - View Fine amount\n";
-        cout << "8 - View read list\n";
-        cout << "9 - search By genre\n";
-        cout << "10 - Logout\n";
+          cout << "8 - The number of times each book was borrowed\n";
+        cout << "9 - View read list\n";
+   
+        cout << "10 - search By genre\n";
+        cout << "11 - Logout\n";
         char c;
         cout << "Enter the serial number corresponding to your query: ";
         cin >> c;
@@ -437,15 +446,19 @@ int student::studentInterface(){
         }else if(c=='7'){
             cout << "The existing fine is: " << this->fine << "\n";
         }
-        else if(c=='8'){
+          else if(c=='8'){
+           Book b;
+            b.amountBorrow();
+        }
+        else if(c=='9'){
             chooseForReadListS();
         }
-        else if(c=='9')
+        else if(c=='10')
         {
             student temp;
             temp.SearchByGenre();
         }
-        else if(c=='10'){
+        else if(c=='11'){
             return 0;
         }
         else cout << "Enter a valid serial number.\n";
@@ -485,6 +498,21 @@ void student::clearFineAmount(){
     cout << "Fine of " << this->name << " cleared.\n";
     return;
 }
+void Book::amountBorrow()
+{
+    Book temp;
+    char t[120];
+    getchar();
+    cout << "Enter the name of book to check its amounts borrow : ";
+    cin.getline(t, 120);// Loop because getline works differently and takes some extra space from previous input.
+    for (auto i: listOfBooks)
+    {
+        const char* charPtr = i.title.c_str();
+        if (strcmp(charPtr,t) == 0)
+
+            cout<<i.amountBorrowed << " Borrowed!\n";
+    }//for
+}
 
 string Book::bookRequest(string id){
     cout << "Enter the name of the book: ";
@@ -496,6 +524,7 @@ string Book::bookRequest(string id){
         if(listOfBooks[i].title==t && listOfBooks[i].available==1){
             listOfBooks[i].issuedto=id;
             listOfBooks[i].available=0;
+            listOfBooks[i].amountBorrowed += 1;
             cout << "Please Enter the issue date(DDMMYYYY): ";
             cin >> t;
             listOfBooks[i].issuedate=t;
@@ -608,6 +637,7 @@ void BookDatabase::addBook(){
     newBook.publication=t;
     newBook.issuedate="-";
     newBook.issuedto="-";
+    newBook.amountBorrowed = '\0';
     listOfBooks.push_back(newBook);
     cout << "Book added.\n";
     
@@ -945,6 +975,7 @@ void getDatabaseData(){
             temp.available=stoi(bookdata[4]);
             temp.issuedto=bookdata[5];
             temp.issuedate=bookdata[6];
+            temp.amountBorrowed = bookdata[7];
             listOfBooks.push_back(temp);
         }
     }else{
@@ -1002,6 +1033,7 @@ void updateDatabase(){
         fout << i.available << ",";
         fout << i.issuedto << ",";
         fout << i.issuedate << "\n";
+        fout << i.amountBorrowed;
     }
     fout.close();
 }
