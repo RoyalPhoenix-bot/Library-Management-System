@@ -1,0 +1,3 @@
+"C:\Users\student\AppData\Local\JetBrains\CLion 2022.2.4\bin\cmake\win\bin\cmake.exe" -E rm -f CMakeFiles\Library-Management-System.dir/objects.a
+C:\Users\student\AppData\Local\JETBRA~1\CLION2~1.4\bin\mingw\bin\ar.exe qc CMakeFiles\Library-Management-System.dir/objects.a @CMakeFiles\Library-Management-System.dir\objects1.rsp
+C:\Users\student\AppData\Local\JETBRA~1\CLION2~1.4\bin\mingw\bin\G__~1.EXE -g -Wl,--whole-archive CMakeFiles\Library-Management-System.dir/objects.a -Wl,--no-whole-archive -o Library-Management-System.exe -Wl,--out-implib,libLibrary-Management-System.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\Library-Management-System.dir\linklibs.rsp
